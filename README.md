@@ -3,8 +3,8 @@
 This repo is an AWS Lambda serverless app template with Terraform deployment management. It is intended to guide you to
 good choices for ease of development and operations, without being overly opinionated about your workflow.
 
-[AWS Lambda](https://aws.amazon.com/lambda/) is a serverless application platform that we use to build web services,
-APIs, and event handlers on AWS. Lambda scales quickly to accommodate burst loads, and integrates tightly
+[AWS Lambda](https://aws.amazon.com/lambda/) is a serverless application platform that we use to build web applications,
+services/APIs, and event handlers on AWS. Lambda scales quickly to accommodate burst loads, and integrates tightly
 with [many AWS event sources](http://docs.aws.amazon.com/lambda/latest/dg/invoking-lambda-function.html), allowing us to
 build simpler, more efficient and maintainable applications on AWS.
 
@@ -14,8 +14,10 @@ cloud resources. Terraform allows us to reproducibly and securely manage our AWS
 
 Out of the box, Terraform and Lambda require a lot of configuration and domain knowledge to work together. You need to
 know how to package your function and its dependencies, configure its IAM role, set up event sources, configure API
-Gateway, set up a Terraform credentials source and state backend, and more, depending on your application. In this
-repository, we provide the tools to take care of all this in a minimalistic, well-documented, intuitive way.
+Gateway, set up a Terraform credentials source and state backend, and more, depending on your application.
+
+In this repository, we provide the tools to take care of all this in a minimalistic, well-documented, intuitive way, so
+you can focus on building your app.
 
 To manage the Lambda packaging, we use [Chalice](https://github.com/aws/chalice), a Python microframework developed by
 AWS for Lambda. The template in this repo builds upon the output of `chalice new-project`.
@@ -73,5 +75,13 @@ Your Lambda function is assigned an IAM role that controls the permissions given
 IAM role is set from the file `.chalice/policy-dev.json`. Edit this policy and repeat the deployment if your Lambda
 needs access to other AWS APIs. You can also edit the Makefile to parameterize this file or generate it from a template
 as needed. (The setting `autogen_policy` must be set to `false` in `.chalice/config.json` for Chalice to use this file.)
+
+## Handling other AWS event sources
+See [Lambda Event Sources](https://chalice.readthedocs.io/en/latest/topics/events.html) in the Chalice docs for details
+on how to connect your app to
+[other AWS event sources](http://docs.aws.amazon.com/lambda/latest/dg/invoking-lambda-function.html). If the built-in
+event handlers are not sufficient, you could also consider using the
+[Domovoi project](https://github.com/kislyuk/domovoi), which builds upon Chalice to handle many other event source
+configurations (but is not currently compatible with the Terraform/CloudFormation workflow shown here).
 
 [![Build Status](https://travis-ci.com/chanzuckerberg/chalice-app-template.svg?token=iPJHxi7MxMYqJkBxfGCC&branch=master)](https://travis-ci.com/chanzuckerberg/chalice-app-template)
