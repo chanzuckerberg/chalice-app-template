@@ -63,3 +63,5 @@ The test suite in `test/test.py` runs Chalice in local mode for unit testing. Yo
 
 ## Managing the Lambda IAM role and assume role policy
 TODO
+
+[![Build Status](https://travis-ci.com/chanzuckerberg/chalice-app-template.svg?token=iPJHxi7MxMYqJkBxfGCC&branch=master)](https://travis-ci.com/chanzuckerberg/chalice-app-template)

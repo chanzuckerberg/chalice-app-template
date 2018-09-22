@@ -13,7 +13,7 @@ before_install:
   - pip install --quiet coverage flake8 pyyaml
 
 install:
-  - echo "No install steps configured"
+  - pip install -r requirements-dev.txt
 
 script:
   - make test
