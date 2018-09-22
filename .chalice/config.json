@@ -1,9 +1,19 @@
 {
   "stages": {
     "dev": {
-      "api_gateway_stage": "api"
+      "api_gateway_stage": "api",
+      "iam_policy_file": "policy-dev.json",
+      "lambda_memory_size": 256,
+      "lambda_timeout": 30,
+      "environment_variables": {
+        "EXAMPLE_VAR": "example-value"
+      },
+      "tags": {
+        "created-from": "chalice-app-template"
+      }
     }
   },
   "version": "2.0",
-  "app_name": "chalice-app-template"
+  "app_name": "chalice-app-template",
+  "autogen_policy": false
 }
