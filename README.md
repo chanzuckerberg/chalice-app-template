@@ -10,7 +10,7 @@ build simpler, more efficient and maintainable applications on AWS.
 
 [Terraform](https://www.terraform.io/) is
 an [Infrastructure-as-Code](https://en.wikipedia.org/wiki/Infrastructure_as_Code) framework that we use to manage our
-cloud resources. Terraform allows us to reproducibly and securely manage our AWS infrastructure.
+cloud resources. Terraform allows us to automatically, reproducibly, and securely manage our AWS infrastructure.
 
 Out of the box, Terraform and Lambda require a lot of configuration and domain knowledge to work together. You need to
 know how to package your function and its dependencies, configure its IAM role, set up event sources, configure API
@@ -57,11 +57,12 @@ Filename                  | Purpose                           | Information link
    concurrency, tags, and environment variables.
 1. Edit `app.py` and `requirements.txt` to create your app.
 1. Deploy your app by running `make deploy`. The deployment results, including your Lambda's EndpointURL, will be
-   printed to the terminal. You can immediately test your app by running
+   printed to the terminal. You can immediately test your app by running (for example)
    `http https://your-api-id.execute-api.us-east-1.amazonaws.com/api/` or opening the EndpointURL in a browser.
 1. If needed, assign
-   a [Custom Domain Name](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html) to
-   your app in the [AWS Console for API Gateway](https://console.aws.amazon.com/apigateway/home#/custom-domain-names).
+   a [Custom Domain Name](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html),
+   [ACM certificate](https://aws.amazon.com/certificate-manager/) and [Route 53 CNAME](https://aws.amazon.com/route53/)
+   to your app in the [API Gateway AWS Console](https://console.aws.amazon.com/apigateway/home#/custom-domain-names).
 
 To redeploy your app after updating, run `make deploy` again. To undeploy the app and delete all associated resources,
 run `make destroy`.
@@ -83,5 +84,16 @@ on how to connect your app to
 event handlers are not sufficient, you could also consider using the
 [Domovoi project](https://github.com/kislyuk/domovoi), which builds upon Chalice to handle many other event source
 configurations (but is not currently compatible with the Terraform/CloudFormation workflow shown here).
+
+## Monitoring your app
+Lambda is automatically set up to emit logs to
+[CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html), which you can
+browse in the [AWS console](https://console.aws.amazon.com/cloudwatch/home#logs:) by selecting the log group for your
+Lambda. You can see built-in CloudWatch metrics (invocations, errors, etc.) by selecting your Lambda in the
+[Lambda AWS console](https://console.aws.amazon.com/lambda/home#/functions) and going to the **Monitoring** tab.
+To tail and filter logs on the command line, you can use the `logs` command in the
+[Aegea](https://github.com/kislyuk/aegea) package, for example:
+
+    aegea logs /aws/lambda/my-lambda-APIHandler-ABCDEXAMPLE --start-time=-15m
 
 [![Build Status](https://travis-ci.com/chanzuckerberg/chalice-app-template.svg?token=iPJHxi7MxMYqJkBxfGCC&branch=master)](https://travis-ci.com/chanzuckerberg/chalice-app-template)
