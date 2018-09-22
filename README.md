@@ -62,7 +62,8 @@ Filename                  | Purpose                           | Information link
 1. If needed, assign
    a [Custom Domain Name](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html),
    [ACM certificate](https://aws.amazon.com/certificate-manager/) and [Route 53 CNAME](https://aws.amazon.com/route53/)
-   to your app in the [API Gateway AWS Console](https://console.aws.amazon.com/apigateway/home#/custom-domain-names).
+   to your app in the [API Gateway AWS Console](https://console.aws.amazon.com/apigateway/home#/custom-domain-names),
+   so users can reach your app on a friendly domain like https://app.czi.technology.
 
 To redeploy your app after updating, run `make deploy` again. To undeploy the app and delete all associated resources,
 run `make destroy`.
