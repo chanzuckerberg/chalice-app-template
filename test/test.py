@@ -15,9 +15,8 @@ class ChaliceTestHarness:
         self._gateway = LocalGateway(self._chalice_app, config)
 
     @functools.lru_cache(maxsize=64, typed=False)
-    def __getattr__(self, item):
-        item = item.upper()
-        return functools.partial(self.request, method=item)
+    def __getattr__(self, method):
+        return functools.partial(self.request, method=method.upper())
 
     def request(self, path, headers={}, body={}, method="GET"):
         resp_obj = requests.Response()
