@@ -1,32 +1,29 @@
-SHELL=/bin/bash
-SAM_TX="import sys, json, boto3, samtranslator.translator.transform as t, samtranslator.public.translator as pt; \
-        print(json.dumps(t.transform(json.load(sys.stdin), {}, pt.ManagedPolicyLoader(boto3.client('iam')))))"
-GET_CREDS="import json, boto3.session as s; \
-           print(json.dumps(s.Session().get_credentials().get_frozen_credentials()._asdict()))"
-
-export AWS_REGION=$(shell aws configure get region)
-export AWS_ACCOUNT_ID=$(shell aws sts get-caller-identity | jq -r .Account)
-export TF_S3_BUCKET=tfstate-$(AWS_ACCOUNT_ID)
+SHELL=/bin/bash -o pipefail
 export APP_NAME=$(shell jq -r .app_name .chalice/config.json)
+export STAGE=dev
+export TF_DATA_DIR=.terraform.$(STAGE)
+export TFSTATE_FILE=$(TF_DATA_DIR)/remote.tfstate
+export TF_CLI_ARGS_output=--state $(TFSTATE_FILE)
+export TF_CLI_ARGS_init=--backend-config $(APP_HOME)/$(TF_DATA_DIR)/aws_config.json
 
-deploy: init package
-	$(eval LAMBDA_MD5 = $(shell md5sum dist/deployment.zip | cut -f 1 -d ' '))
-	aws s3 cp dist/deployment.zip s3://$(TF_S3_BUCKET)/$(LAMBDA_MD5).zip
-	cat dist/sam.json | \
-            jq '.Resources.APIHandler.Properties.CodeUri="s3://$(TF_S3_BUCKET)/$(LAMBDA_MD5).zip"' | \
-            python -c $(SAM_TX) > dist/cloudformation.json
+# See https://github.com/terraform-providers/terraform-provider-aws/issues/1184
+AWS_SDK_LOAD_CONFIG=1
+
+deploy: init
+	echo "$$(jq .resource.aws_api_gateway_deployment.rest_api.lifecycle.create_before_destroy=true chalice.tf.json)" > chalice.tf.json
 	terraform apply
-	terraform state show aws_cloudformation_stack.lambda
+
+init: package
+	$(eval AWS_REGION = $(shell aws configure get region))
+	$(eval AWS_ACCOUNT_ID = $(shell aws sts get-caller-identity | jq -r .Account))
+	$(eval TF_S3_BUCKET = tfstate-$(AWS_ACCOUNT_ID))
+	-rm -f $(TF_DATA_DIR)/*.tfstate
+	mkdir -p $(TF_DATA_DIR)
+	jq -n ".region=env.AWS_REGION | .bucket=env.TF_S3_BUCKET | .key=env.APP_NAME+env.STAGE" > $(TF_DATA_DIR)/aws_config.json
+	terraform init
 
 package:
-	chalice package dist
-
-get-config:
-	@python -c $(GET_CREDS) | jq ".region=env.AWS_REGION | .bucket=env.TF_S3_BUCKET | .key=env.APP_NAME"
-
-init:
-	-rm -f .terraform/terraform.tfstate
-	terraform init --backend-config <($(MAKE) get-config)
+	chalice package --pkg-format terraform .
 
 destroy: init
 	terraform destroy

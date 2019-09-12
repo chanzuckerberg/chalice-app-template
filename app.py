@@ -8,6 +8,8 @@ logging.getLogger().setLevel(log_level)
 
 app = Chalice(app_name='chalice-app-template')
 app.debug = True if log_level == logging.DEBUG else False
+for l in "botocore.vendored.requests.packages.urllib3.connectionpool", "requests.packages.urllib3.connectionpool":
+    logging.getLogger(l).setLevel(max(log_level, logging.WARNING))
 
 logger = logging.getLogger(__name__)
 
