@@ -13,6 +13,7 @@ for l in "botocore.vendored.requests.packages.urllib3.connectionpool", "requests
 
 logger = logging.getLogger(__name__)
 
+
 @app.route('/')
 def index():
     app.log.debug("This is a debug logging test with the app logger")
