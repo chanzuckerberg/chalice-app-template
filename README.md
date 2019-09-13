@@ -23,9 +23,7 @@ To manage the Lambda packaging, we use [Chalice](https://github.com/aws/chalice)
 AWS for Lambda. The template in this repo builds upon the output of `chalice new-project`.
 
 Instead of letting Chalice directly deploy our app, we run `chalice package`, which builds the app and produces
-a [SAM](https://github.com/awslabs/serverless-application-model) template, which is a kind
-of [CloudFormation](https://aws.amazon.com/cloudformation/) template. We then use Terraform to deploy the app from this
-template.
+a Terraform module, `chalice.tf.json`. We then use Terraform to deploy the app from this module.
 
 We also provide a recipe to easily manage Terraform credentials and state on AWS. The AWS API credentials are imported
 on demand from your [AWS CLI](https://aws.amazon.com/cli/) config, which allows you to centrally manage your
@@ -41,7 +39,6 @@ Filename                  | Purpose                           | Information link
 `requirements-dev.txt`    |Developer environment dependencies | [Pip requirements files](https://pip.readthedocs.io/en/1.1/requirements.html)
 `requirements.txt`        |Application dependencies           | [Chalice App Packaging](https://chalice.readthedocs.io/en/latest/topics/packaging.html)
 `Makefile`                |Tools for packaging and deploying  | [Automation and Make](https://swcarpentry.github.io/make-novice/)
-`terraform-deploy.tf`     |Terraform config file for deploying| [Terraform Configuration](https://www.terraform.io/docs/configuration/)
 `.chalice/config.json`    |Chalice config file for the app    | [Chalice Configuration File](https://chalice.readthedocs.io/en/latest/topics/configfile.html)
 `.chalice/policy-dev.json`|IAM policy for the app's IAM role  | [Lambda Permissions](https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html)
 `test/test.py`            |Test suite template                | [Python unittest](https://docs.python.org/3/library/unittest.html)
@@ -84,7 +81,7 @@ on how to connect your app to
 [other AWS event sources](http://docs.aws.amazon.com/lambda/latest/dg/invoking-lambda-function.html). If the built-in
 event handlers are not sufficient, you could also consider using the
 [Domovoi project](https://github.com/kislyuk/domovoi), which builds upon Chalice to handle many other event source
-configurations (but is not currently compatible with the Terraform/CloudFormation workflow shown here).
+configurations (but is not currently compatible with the Terraform workflow shown here).
 
 ## Monitoring your app
 Lambda is automatically set up to emit logs to
