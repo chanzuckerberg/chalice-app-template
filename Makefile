@@ -7,7 +7,7 @@ export TF_CLI_ARGS_output=--state $(TFSTATE_FILE)
 export TF_CLI_ARGS_init=--backend-config $(APP_HOME)/$(TF_DATA_DIR)/aws_config.json
 
 # See https://github.com/terraform-providers/terraform-provider-aws/issues/1184
-AWS_SDK_LOAD_CONFIG=1
+export AWS_SDK_LOAD_CONFIG=1
 
 deploy: init
 	echo "$$(jq .resource.aws_api_gateway_deployment.rest_api.lifecycle.create_before_destroy=true chalice.tf.json)" > chalice.tf.json
